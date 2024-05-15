@@ -1,0 +1,18 @@
+hello: "Hello World"
+spring:
+  application:
+    name: demo-image
+server:
+  shutdown: graceful
+#  port: 8088
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
