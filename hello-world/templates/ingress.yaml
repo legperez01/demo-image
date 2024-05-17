@@ -5,9 +5,11 @@ metadata:
   namespace: {{ .Values.namespace.name }}
   name: {{ .Values.deployment.name }}
   annotations:
+    {{- if .Values.ingress.tls.enabled }}
     cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
+    {{- end }}
 spec:
-  ingressClassName: nginx
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
   rules:
     - host: {{ .Values.ingress.host }}
       http:
@@ -19,8 +21,10 @@ spec:
               name: {{ .Values.deployment.name }}
               port:
                 number: {{ .Values.deployment.container.port }}
+  {{- if .Values.ingress.tls.enabled }}
   tls:
     - hosts:
       - {{ .Values.ingress.host }}
       secretName: {{ .Values.ingress.tls.secretName }}
+  {{- end }}
 {{- end }}

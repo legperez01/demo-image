@@ -27,9 +27,11 @@ resources:
 
 ingress:
   enabled: false
+  ingressClassName: nginx
   host: ""
   clusterIssuer: ""
   tls:
+    enabled: false
     secretName: ""
 
 autoscaling:
