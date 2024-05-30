@@ -1,0 +1,46 @@
+# values.yaml
+namespace:
+  name: dev
+
+image: 
+  name: legperez/demo-image
+  tag: v1.0.0-SNAPSHOT
+
+deployment:
+  name: demo-image
+  replicas: 1
+  container:  
+    port: 8080
+
+livenessProbe:
+  path: /actuator/health/liveness
+readinessProbe:
+  path: /actuator/health/readiness
+
+resources: 
+  limits:
+    cpu: 500m
+    memory: 1G
+  requests:
+    cpu: 250m
+    memory: 1G
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  host: hello.legperez.com
+  clusterIssuer: ""
+  tls:
+    enabled: false
+    secretName: ""
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+applicationConfig:
+  applicationYml: |
+    hello: "Hello From Config Map Application.yml File in AWS EKS"
