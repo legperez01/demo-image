@@ -1,0 +1,26 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  prerelease:
+    name: Prereleased
+    if: ${{ github.event.release.prerelease }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Testing prereleased
+        run: |
+          echo The event type is prereleased
+
+  release:
+    name: Released
+    if: ${{ !github.event.release.prerelease }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Testing Released
+        run: |
+          echo The event type is release
+        
+        

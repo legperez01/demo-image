@@ -9,9 +9,9 @@ spec:
   source:
     repoURL: https://github.com/legperez01/demo-image.git
     targetRevision: HEAD
-    path: helm
+    path: helm/hello-world
     helm:
-      valueFile:
+      valueFiles:
         - values.yaml
   destination: 
     server: https://kubernetes.default.svc

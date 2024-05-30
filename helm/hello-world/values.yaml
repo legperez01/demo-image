@@ -26,9 +26,9 @@ resources:
     memory: 1G
 
 ingress:
-  enabled: false
+  enabled: true
   ingressClassName: nginx
-  host: ""
+  host: hello.legperez.com
   clusterIssuer: ""
   tls:
     enabled: false
@@ -43,4 +43,4 @@ autoscaling:
 
 applicationConfig:
   applicationYml: |
-    hello: "Hello From Config Map Application.yml File Again"
+    hello: "Hello From Config Map Application.yml File in AWS EKS"
