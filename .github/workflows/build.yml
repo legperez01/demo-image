@@ -36,6 +36,7 @@ jobs:
   update-dev-eks-repo:
     name: Update Dev EKS Repo
     if: ${{ github.event.release.prerelease }}
+    needs: build-image
     runs-on: ubuntu-latest
     steps:
       - name: Use config repository
@@ -56,6 +57,7 @@ jobs:
   update-prod-eks-repo:
     name: Update Prod EKS Repo
     if: ${{ !github.event.release.prerelease }}
+    needs: build-image
     runs-on: ubuntu-latest
     steps:
       - name: Use config repository
