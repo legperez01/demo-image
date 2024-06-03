@@ -4,7 +4,7 @@ namespace:
 
 image: 
   name: legperez/demo-image
-  tag: v1.0.0-dev.2
+  tag: v1.0.0-dev.3
 
 deployment:
   name: demo-image
