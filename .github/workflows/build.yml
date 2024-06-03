@@ -12,6 +12,7 @@ env:
 
 jobs:
   build-image:
+    name: Build and Push Image to AWS ECR
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -70,9 +71,9 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
       - name: Update image tag in values-prod.yaml
         run: |
-          sed -i "s/tag: .*/tag: $PROJECT_VERSION/" HELM_VALUES_PROD
+          sed -i "s/tag: .*/tag: $PROJECT_VERSION/" $HELM_VALUES_PROD
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add HELM_VALUES_PROD
+          git add $HELM_VALUES_PROD
           git commit -m "Update image tag to $PROJECT_VERSION"
           git push origin master
