@@ -48,7 +48,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ env.REPOSITORY_OWNER }}/demo-image-eks
-          ref: master
+          ref: main
           token: ${{ secrets.GH_TOKEN }}
       - name: Update image tag in values.yaml
         run: |
@@ -57,7 +57,7 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git add $HELM_VALUES_DEV
           git commit -m "Update image tag to $PROJECT_VERSION"
-          git push origin master
+          git push origin main
           
   update-prod-eks-repo:
     name: Update Prod EKS Repo
@@ -71,7 +71,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ env.REPOSITORY_OWNER }}/demo-image-eks
-          ref: master
+          ref: main
           token: ${{ secrets.GH_TOKEN }}
       - name: Update image tag in values-prod.yaml
         run: |
@@ -80,4 +80,4 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git add $HELM_VALUES_PROD
           git commit -m "Update image tag to $PROJECT_VERSION"
-          git push origin master
+          git push origin main
