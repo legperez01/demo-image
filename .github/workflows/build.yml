@@ -56,7 +56,8 @@ jobs:
           git add $HELM_VALUES_DEV
           git commit -m "Update image tag to $PROJECT_VERSION"
           git push origin main
-          
+
+  # testing
   update-prod-eks-repo:
     name: Update Prod EKS Repo
     if: ${{ !github.event.release.prerelease }}
