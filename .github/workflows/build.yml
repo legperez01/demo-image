@@ -41,8 +41,6 @@ jobs:
     if: ${{ github.event.release.prerelease }}
     needs: build-image
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - name: Use config repository
         uses: actions/checkout@v4
@@ -64,8 +62,6 @@ jobs:
     if: ${{ !github.event.release.prerelease }}
     needs: build-image
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - name: Use config repository
         uses: actions/checkout@v4
