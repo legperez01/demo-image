@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.deployment.name }}-cronjob
+  namespace: {{ .Values.namespace.name }}
+spec:
+  schedule: "*/1 * * * *"  # This sets the CronJob to run every minute
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: {{ .Values.deployment.name }}-restart-container
+              image: bitnami/kubectl:latest
+              command:
+                - 'kubectl'
+                - 'rollout'
+                - 'restart'
+                - 'deployment/{{ .Values.deployment.name }}'

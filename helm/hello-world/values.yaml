@@ -2,13 +2,14 @@
 namespace:
   name: dev
 
+replicaCount: 1
+
 image: 
   name: legperez/demo-image
   tag: v1.0.0-SNAPSHOT
 
 deployment:
   name: demo-image
-  replicas: 1
   container:  
     port: 8080
 
