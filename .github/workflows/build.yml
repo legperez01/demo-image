@@ -43,8 +43,7 @@ jobs:
     strategy:
       matrix:
         environment:
-          - { name: "Dev", is_pre: true, values_file: "helm/hello-world/values.yaml" }
-          - { name: "Prod", is_pre: false, values_file: "helm/hello-world/values-prod.yaml" }
+          ${{ fromJson( github.event.release.prerelease ? '[{"name": "Dev", "values_file": "helm/hello-world/values.yaml" } ]' : '[ { "name": "Prod", "values_file": "helm/hello-world/values-prod.yaml" } ]' ) }}
     steps:
       - name: Use config repository
         uses: actions/checkout@v4
@@ -54,7 +53,6 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
 
       - name: Update image tag in ${{ matrix.environment.values_file }}
-        if: ${{ matrix.environment.is_pre == github.event.release.prerelease }}
         run: |
           sed -i "s/tag: .*/tag: $PROJECT_VERSION/" ${{ matrix.environment.values_file }}
           git config --global user.name "github-actions"
