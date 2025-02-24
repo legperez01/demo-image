@@ -36,11 +36,16 @@ jobs:
       - name: Build Native Image
         run: ./gradlew clean bootBuildImage --imageName=$IMAGE_NAME  --publishImage -PregistryUsername=AWS -PregistryToken=$(aws ecr get-login-password --region ${{vars.AWS_REGION}})
 
-  update-dev-eks-repo:
-    name: Update Dev EKS Repo
-    if: ${{ github.event.release.prerelease }}
+  update-eks-repo:
+    name: Update EKS Repo
     needs: build-image
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment:
+          - { name: "Dev", is_pre: true, values_file: "helm/hello-world/values.yaml" }
+          - { name: "Prod", is_pre: false, values_file: "helm/hello-world/values-prod.yaml" }
+    if: ${{ matrix.environment.is_pre == github.event.release.prerelease }}
     steps:
       - name: Use config repository
         uses: actions/checkout@v4
@@ -48,33 +53,12 @@ jobs:
           repository: ${{ env.REPOSITORY_OWNER }}/demo-image-eks
           ref: main
           token: ${{ secrets.GH_TOKEN }}
-      - name: Update image tag in values.yaml
-        run: |
-          sed -i "s/tag: .*/tag: $PROJECT_VERSION/" $HELM_VALUES_DEV
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git add $HELM_VALUES_DEV
-          git commit -m "Update image tag to $PROJECT_VERSION"
-          git push origin main
 
-  # testing
-  update-prod-eks-repo:
-    name: Update Prod EKS Repo
-    if: ${{ !github.event.release.prerelease }}
-    needs: build-image
-    runs-on: ubuntu-latest
-    steps:
-      - name: Use config repository
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ env.REPOSITORY_OWNER }}/demo-image-eks
-          ref: main
-          token: ${{ secrets.GH_TOKEN }}
-      - name: Update image tag in values-prod.yaml
+      - name: Update image tag in ${{ matrix.environment.values_file }}
         run: |
-          sed -i "s/tag: .*/tag: $PROJECT_VERSION/" $HELM_VALUES_PROD
+          sed -i "s/tag: .*/tag: $PROJECT_VERSION/" ${{ matrix.environment.values_file }}
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add $HELM_VALUES_PROD
+          git add ${{ matrix.environment.values_file }}
           git commit -m "Update image tag to $PROJECT_VERSION"
           git push origin main
