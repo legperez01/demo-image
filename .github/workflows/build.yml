@@ -42,8 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment:
-          ${{ fromJson( github.event.release.prerelease ? '[{"name": "Dev", "values_file": "helm/hello-world/values.yaml" } ]' : '[ { "name": "Prod", "values_file": "helm/hello-world/values-prod.yaml" } ]' ) }}
+        ${{ fromJson( github.event.release.prerelease ? '{"include": [ { "name": "Dev", "values_file": "helm/hello-world/values.yaml" } ] }' : '{ "include": [ { "name": "Prod", "values_file": "helm/hello-world/values-prod.yaml" } ] }' ) }}
     steps:
       - name: Use config repository
         uses: actions/checkout@v4
@@ -52,11 +51,11 @@ jobs:
           ref: main
           token: ${{ secrets.GH_TOKEN }}
 
-      - name: Update image tag in ${{ matrix.environment.values_file }}
+      - name: Update image tag in ${{ matrix.values_file }}
         run: |
-          sed -i "s/tag: .*/tag: $PROJECT_VERSION/" ${{ matrix.environment.values_file }}
+          sed -i "s/tag: .*/tag: $PROJECT_VERSION/" ${{ matrix.values_file }}
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add ${{ matrix.environment.values_file }}
+          git add ${{ matrix.values_file }}
           git commit -m "Update image tag to $PROJECT_VERSION"
           git push origin main
