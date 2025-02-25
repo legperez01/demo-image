@@ -40,9 +40,6 @@ jobs:
     name: Update EKS Repo
     needs: build-image
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        ${{ fromJson( github.event.release.prerelease ? '{"include": [ { "name": "Dev", "values_file": "helm/hello-world/values.yaml" } ] }' : '{ "include": [ { "name": "Prod", "values_file": "helm/hello-world/values-prod.yaml" } ] }' ) }}
     steps:
       - name: Use config repository
         uses: actions/checkout@v4
@@ -50,12 +47,21 @@ jobs:
           repository: ${{ env.REPOSITORY_OWNER }}/demo-image-eks
           ref: main
           token: ${{ secrets.GH_TOKEN }}
-
-      - name: Update image tag in ${{ matrix.values_file }}
+      - id: variables
+        name: Setting Value File
         run: |
-          sed -i "s/tag: .*/tag: $PROJECT_VERSION/" ${{ matrix.values_file }}
+          if [ "${{ github.event.release.prerelease }}" == "true" ]; then
+            HELM_VALUES="helm/hello-world/values.yaml"
+          else
+            HELM_VALUES="helm/hello-world/values-prod.yaml"
+          fi
+          echo "HELM_VALUES=$HELM_VALUES" >> $GITHUB_ENV
+      - name: Update image tag
+        run: |
+          echo "Updating file: $HELM_VALUES"
+          sed -i "s/tag: .*/tag: $PROJECT_VERSION/" "$HELM_VALUES"
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add ${{ matrix.values_file }}
+          git add "$HELM_VALUES"
           git commit -m "Update image tag to $PROJECT_VERSION"
           git push origin main
